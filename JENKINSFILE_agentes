@@ -152,19 +152,22 @@ pipeline {
                         '''
                         sh '''
                             export FLASK_APP=${WORKSPACE}/app/api.py
-                            python3 -m flask run --host=0.0.0.0 --port=5050 &
+                            python3 -m flask run --host=0.0.0.0 --port=5051 &
                             FLASK_PID=$!
 
                             echo "Esperando a que Flask este listo..."
                             for i in $(seq 1 30); do
-                                if curl -s http://localhost:5050/ > /dev/null 2>&1; then
+                                if curl -s http://localhost:5051/ > /dev/null 2>&1; then
                                     echo "Flask listo despues de $i intentos"
                                     break
                                 fi
                                 sleep 1
                             done
 
-                            /Users/macminimoi/apache-jmeter-5.6.3/bin/jmeter -n -t test/jmeter/flask.jmx -l result-jmeter.jtl
+                            # Modificar JMX para usar puerto 5051
+                            sed 's/5050/5051/g' test/jmeter/flask.jmx > test/jmeter/flask_perf.jmx
+
+                            /Users/macminimoi/apache-jmeter-5.6.3/bin/jmeter -n -t test/jmeter/flask_perf.jmx -l result-jmeter.jtl
 
                             kill $FLASK_PID || true
                         '''
