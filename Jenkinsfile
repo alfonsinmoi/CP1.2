@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Get Code') {
             steps {
-                git 'https://github.com/alfonsinmoi/CP1.2.git'
+                git branch: 'feature_fix_coverage', url: 'https://github.com/alfonsinmoi/CP1.2.git'
                 echo "WORKSPACE: ${WORKSPACE}"
                 sh 'ls -la'
             }
